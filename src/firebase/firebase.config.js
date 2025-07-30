@@ -5,13 +5,14 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyA3JDh5jUTx-AY6sPSz4tlmDXLHPtkj4ew",
-  authDomain: "living-hire.firebaseapp.com",
-  projectId: "living-hire",
-  storageBucket: "living-hire.firebasestorage.app",
-  messagingSenderId: "343784254659",
-  appId: "1:343784254659:web:1f4d163974508059670676"
+  apiKey: import.meta.env.VITE_apiKey,
+  authDomain: import.meta.env.VITE_authDomain,
+  projectId: import.meta.env.VITE_projectId,
+  storageBucket: import.meta.env.VITE_storageBucket,
+  messagingSenderId: import.meta.env.VITE_messagingSenderId,
+  appId: import.meta.env.VITE_appId
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+export default app;
