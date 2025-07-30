@@ -1,26 +1,23 @@
-import { useContext } from "react";
 import { Outlet } from "react-router-dom";
-import AuthContext from "../provider/AuthContext";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const MainLayout = () => {
-    const {signInWithGoogle} = useContext(AuthContext)
-    return (
-        <>
-            <header>
-                    <h1>Hii</h1>
-            </header>     
+  return (
+    <>
+      <header>
+        <Navbar></Navbar>
+      </header>
 
-            <button onClick={signInWithGoogle}>Google</button>
+      <main className="min-h-[calc(100vh-302px)]">
+        <Outlet></Outlet>
+      </main>
 
-            <main>
-                <Outlet></Outlet>
-            </main>
-
-            <footer>
-
-            </footer>
-        </>
-    );
+      <>
+        <Footer></Footer>
+      </>
+    </>
+  );
 };
 
 export default MainLayout;
