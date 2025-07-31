@@ -14,9 +14,9 @@ const JobDetails = () => {
   const [startDate, setStartDate] = useState(new Date());
 
   const handleSubmitBids = async (e) => {
+    e.preventDefault();
     if (user?.email === job.buyer.email)
       return toast.error("Action Not Permitted");
-    e.preventDefault();
     const formData = new FormData(e.target);
     const inputValues = Object.fromEntries(formData.entries());
 
@@ -24,7 +24,7 @@ const JobDetails = () => {
     rest.jobId = job._id;
     rest.buyer_email = job.buyer.email;
     rest.bid_price = parseFloat(price);
-    console.log(rest.bid_price, job?.min_price)
+
     if (rest.bid_price < job?.min_price)
       return toast.error(`Offer more or at least equal to Minimum price`);
 
@@ -41,7 +41,7 @@ const JobDetails = () => {
     rest.job_title = job?.job_title;
     rest.bidder_email = user?.email;
 
-    /*  try {
+     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/bid`,
         rest
@@ -51,7 +51,7 @@ const JobDetails = () => {
       }
     } catch (err) {
       console.log(err);
-    } */
+    }
   };
 
   return (

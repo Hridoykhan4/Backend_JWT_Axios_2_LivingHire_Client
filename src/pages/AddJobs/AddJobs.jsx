@@ -18,7 +18,7 @@ const AddJobs = () => {
     const formValues = Object.fromEntries(formData.entries());
     const { min_price, max_price, ...others } = formValues;
     others.min_price = parseFloat(min_price);
-    others["max-price"] = parseFloat(max_price);
+    others["max_price"] = parseFloat(max_price);
     others.deadline = startDate.toLocaleDateString("en-GB");
     others.buyer = {
       email: user?.email,
