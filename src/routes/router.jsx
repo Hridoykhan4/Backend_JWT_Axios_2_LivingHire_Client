@@ -4,16 +4,19 @@ import Home from "../pages/Home/Home";
 import Login from "../pages/Authentication/Login";
 import Register from "../pages/Authentication/Register";
 import JobDetails from "../pages/JobDetails/JobDetails";
+import AddJobs from "../pages/AddJobs/AddJobs";
+import ErrorPage from "../pages/ErrorPage/ErrorPage";
+import MyPostedJobs from "../pages/MyPostedJobs/MyPostedJobs";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout></MainLayout>,
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         index: true,
         element: <Home></Home>,
-        // loader: () => fetch(`${import.meta.env.VITE_API_URL}/jobs`)
       },
       {
         path: "/login",
@@ -24,9 +27,19 @@ const router = createBrowserRouter([
         element: <Register></Register>,
       },
       {
-        path: '/job/:id',
-        element: <JobDetails></JobDetails>
-      }
+        path: "/add-job",
+        element: <AddJobs></AddJobs>,
+      },
+      {
+        path: '/my-posted-jobs',
+        element: <MyPostedJobs></MyPostedJobs>
+      },
+      {
+        path: "/job/:id",
+        element: <JobDetails></JobDetails>,
+        loader: ({ params }) =>
+          fetch(`${import.meta.env.VITE_API_URL}/job/${params.id}`),
+      },
     ],
   },
 ]);

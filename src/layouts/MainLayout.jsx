@@ -1,8 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const MainLayout = () => {
+  const navigation = useNavigation();
   return (
     <>
       <header>
@@ -10,7 +12,11 @@ const MainLayout = () => {
       </header>
 
       <main className="min-h-[calc(100vh-302px)]">
-        <Outlet></Outlet>
+        {navigation.state === "loading" ? (
+          <LoadingSpinner></LoadingSpinner>
+        ) : (
+          <Outlet></Outlet>
+        )}
       </main>
 
       <>

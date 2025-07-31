@@ -71,16 +71,24 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow-xl bg-base-100 rounded-box w-56"
             >
               <li>
-                <div className="hover:text-primary">Add Job</div>
+                <NavLink to="/add-job" className="hover:text-primary">
+                  Add Job
+                </NavLink>
               </li>
               <li>
-                <div className="hover:text-primary">My Posted Jobs</div>
+                <NavLink to="/my-posted-jobs" className="hover:text-primary">
+                  My Posted Jobs
+                </NavLink>
               </li>
               <li>
-                <div className="hover:text-primary">My Bids</div>
+                <NavLink to="/my-bids" className="hover:text-primary">
+                  My Bids
+                </NavLink>
               </li>
               <li>
-                <div className="hover:text-primary">Bid Requests</div>
+                <NavLink to="/bid-requests" className="hover:text-primary">
+                  Bid Requests
+                </NavLink>
               </li>
               <li className="pt-2 border-t mt-2">
                 <button
