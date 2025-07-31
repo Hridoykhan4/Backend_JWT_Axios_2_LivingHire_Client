@@ -60,7 +60,7 @@ const TabCategories = () => {
         {categories.map((_, idx) => (
           <TabPanel key={idx}>
             {selectedTabs === idx ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-10 min-h-[300px] animate-fadeIn">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 min-h-[300px] animate-fadeIn">
                 {loading ? (
                   <div className="col-span-full text-center text-gray-500 text-lg">
                     <LoadingSpinner></LoadingSpinner>
@@ -74,7 +74,7 @@ const TabCategories = () => {
                 )}
               </div>
             ) : (
-              <div className="min-h-[300px]"></div> // just placeholder for structure
+              <div className="min-h-[300px]"></div> 
             )}
           </TabPanel>
         ))}

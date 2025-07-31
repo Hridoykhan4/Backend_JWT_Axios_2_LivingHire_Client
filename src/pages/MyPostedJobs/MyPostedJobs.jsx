@@ -8,7 +8,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 
 const MyPostedJobs = () => {
   const [myPostedJobs, setMyPostedJobs] = useState([]);
-
+  const [allJobs, setAllJobs] = useState([]);
   const { user } = useAuthValue();
 
   const getPostedJobs = async () => {
@@ -18,6 +18,7 @@ const MyPostedJobs = () => {
         `${import.meta.env.VITE_API_URL}/jobs/${user.email}`
       );
       setMyPostedJobs(data);
+      setAllJobs(data);
     } catch (err) {
       toast.error("Failed to load", err);
     }
@@ -46,14 +47,40 @@ const MyPostedJobs = () => {
     }
   };
 
+  const handleFilterByCategory = (e) => {
+    const category = e.target.value;
+    if (category === "All") {
+      setMyPostedJobs(allJobs);
+    } else {
+      const filter = allJobs.filter((job) => job.category === category);
+      setMyPostedJobs(filter);
+    }
+  };
+
   return (
     <section className="container  px-4 mx-auto pt-12">
-      <div className="flex items-center gap-x-3">
+      <div className="flex items-center gap-x-3 ">
         <h2 className="text-lg font-medium text-gray-800 ">My Posted Jobs</h2>
 
         <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full ">
           {myPostedJobs.length} Job
         </span>
+
+        {myPostedJobs.length > 5 && (
+          <div className="ms-auto">
+            <select
+              onChange={handleFilterByCategory}
+              defaultValue="Pick a Category"
+              className="select select-info"
+            >
+              <option disabled={true}>Filter By Category</option>
+              <option value={`All`}>All</option>
+              <option value={`Web Development`}>Web</option>
+              <option value={`Graphics Design`}>Graphics</option>
+              <option value={`Digital Marketing`}>Marketing</option>
+            </select>
+          </div>
+        )}
       </div>
 
       {myPostedJobs.length > 0 ? (

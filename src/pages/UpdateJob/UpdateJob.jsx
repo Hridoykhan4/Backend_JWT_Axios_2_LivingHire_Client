@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import useAuthValue from "../../hooks/useAuthValue";
 import axios from "axios";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const UpdateJob = () => {
   const job = useLoaderData();
@@ -21,17 +21,20 @@ const UpdateJob = () => {
     bid_count,
     buyer,
   } = job || {};
+
   const [startDate, setStartDate] = useState(() =>
-    deadline ? new Date(deadline.split("/").reverse().join("-")) : new Date()
+    deadline ? new Date(deadline.split("-").reverse().join("-")) : new Date()
   );
+
 
   const handleUpdateJob = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData.entries());
+
     const { min_price, max_price, ...others } = formValues;
     others.min_price = parseFloat(min_price);
-    others["max_price"] = parseFloat(max_price);
+    others.max_price = parseFloat(max_price);
     others.deadline = startDate.toLocaleDateString("en-GB");
     others.bid_count = bid_count;
     others.buyer = {
@@ -39,122 +42,128 @@ const UpdateJob = () => {
       name: user?.displayName,
       photo: user?.photoURL,
     };
+
     try {
       const { data } = await axios.put(
         `${import.meta.env.VITE_API_URL}/job/${id}`,
         others
       );
       if (data.modifiedCount) {
-        toast.success(`Successfully Updated`);
-        nav(`/my-posted-jobs`)
+        toast.success("✅ Job updated successfully!");
+        nav("/my-posted-jobs");
       }
     } catch (err) {
-        toast.error(`Failed to update !! ${err.message}`)
-    //   console.log(err);
+      toast.error(`❌ Failed to update: ${err.message}`);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-306px)] my-12">
-      <section className=" p-2 md:p-6 mx-auto bg-white rounded-md shadow-md ">
-        <h2 className="text-lg font-semibold text-gray-700 capitalize ">
-          Update a Job
+    <div className="min-h-screen px-4 py-10 bg-gradient-to-br from-white to-gray-100 flex justify-center items-center">
+      <Toaster position="top-center" />
+
+      <section className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6 md:p-10">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          ✏️ Update Job
         </h2>
 
-        <form onSubmit={handleUpdateJob}>
-          <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-            <div>
-              <label className="text-gray-700 " htmlFor="job_title">
-                Job Title
-              </label>
-              <input
-                defaultValue={job_title}
-                id="job_title"
-                name="job_title"
-                type="text"
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              />
-            </div>
-
-            <div>
-              <label className="text-gray-700">Email Address</label>
-              <input
-                value={buyer.email}
-                // id="emailAddress"
-                type="email"
-                // name="email"
-                // disabled
-                readOnly
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border-0 outline-0  rounded-md  "
-              />
-            </div>
-            <div className="flex flex-col gap-2 ">
-              <label className="text-gray-700">Deadline</label>
-
-              <DatePicker
-                className="border p-2 rounded-md"
-                selected={startDate}
-                name="deadline"
-                onChange={(date) => setStartDate(date)}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 ">
-              <label className="text-gray-700 " htmlFor="category">
-                Category
-              </label>
-              <select
-                name="category"
-                id="category"
-                defaultValue={category}
-                className="border p-2 rounded-md"
-              >
-                <option value="Web Development">Web Development</option>
-                <option value="Graphics Design">Graphics Design</option>
-                <option value="Digital Marketing">Digital Marketing</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-gray-700 " htmlFor="min_price">
-                Minimum Price
-              </label>
-              <input
-                defaultValue={min_price}
-                id="min_price"
-                name="min_price"
-                type="number"
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              />
-            </div>
-
-            <div>
-              <label className="text-gray-700 " htmlFor="max_price">
-                Maximum Price
-              </label>
-              <input
-                defaultValue={max_price}
-                id="max_price"
-                name="max_price"
-                type="number"
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              />
-            </div>
+        <form onSubmit={handleUpdateJob} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="job_title" className="block text-gray-700 font-medium mb-1">
+              Job Title
+            </label>
+            <input
+              defaultValue={job_title}
+              id="job_title"
+              name="job_title"
+              type="text"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
           </div>
-          <div className="flex flex-col gap-2 mt-4">
-            <label className="text-gray-700 " htmlFor="description">
-              Description
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Email Address</label>
+            <input
+              value={buyer.email}
+              readOnly
+              type="email"
+              className="w-full px-4 py-2 border bg-gray-100 text-gray-600 border-gray-300 rounded-md cursor-not-allowed"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Deadline</label>
+            <DatePicker
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="category" className="block text-gray-700 font-medium mb-1">
+              Category
+            </label>
+            <select
+              name="category"
+              id="category"
+              defaultValue={category}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="Web Development">Web Development</option>
+              <option value="Graphics Design">Graphics Design</option>
+              <option value="Digital Marketing">Digital Marketing</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="min_price" className="block text-gray-700 font-medium mb-1">
+              Minimum Price ($)
+            </label>
+            <input
+              defaultValue={min_price}
+              id="min_price"
+              name="min_price"
+              type="number"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="max_price" className="block text-gray-700 font-medium mb-1">
+              Maximum Price ($)
+            </label>
+            <input
+              defaultValue={max_price}
+              id="max_price"
+              name="max_price"
+              type="number"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label htmlFor="description" className="block text-gray-700 font-medium mb-1">
+              Job Description
             </label>
             <textarea
               defaultValue={description}
-              className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              name="description"
               id="description"
-              cols="30"
+              name="description"
+              rows="4"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             ></textarea>
           </div>
-          <div className="flex justify-end mt-6">
-            <button className="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transhtmlForm bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-              Save
+
+          <div className="md:col-span-2 text-end mt-4">
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md shadow hover:bg-blue-700 transition"
+            >
+              💾 Save Changes
             </button>
           </div>
         </form>

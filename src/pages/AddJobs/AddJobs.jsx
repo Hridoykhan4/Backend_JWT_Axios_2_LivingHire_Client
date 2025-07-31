@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import useAuthValue from "../../hooks/useAuthValue";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const AddJobs = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -17,9 +17,13 @@ const AddJobs = () => {
     const formData = new FormData(e.target);
     const formValues = Object.fromEntries(formData.entries());
     const { min_price, max_price, ...others } = formValues;
+
     others.min_price = parseFloat(min_price);
-    others["max_price"] = parseFloat(max_price);
-    others.deadline = startDate.toLocaleDateString("en-GB");
+    others.max_price = parseFloat(max_price);
+    others.deadline = startDate
+      .toLocaleDateString("en-GB")
+      .split("/")
+      .join("-");
     others.buyer = {
       email: user?.email,
       name: user?.displayName,
@@ -33,115 +37,160 @@ const AddJobs = () => {
         others
       );
       if (data.insertedId) {
-        toast.success(`${user?.displayName}'s added a new Job`);
+        toast.success(`🛠️ Job posted successfully!`);
         nav(`/my-posted-jobs`);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      toast.error("❌ Failed to post job");
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-306px)] my-12">
-      <section className=" p-2 md:p-6 mx-auto bg-white rounded-md shadow-md ">
-        <h2 className="text-lg font-semibold text-gray-700 capitalize ">
-          Post a Job
+    <div className="min-h-screen px-4 py-10 bg-gradient-to-br from-white to-gray-100 flex justify-center items-center">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          className: "text-sm font-semibold text-gray-800",
+          style: {
+            borderRadius: "10px",
+            background: "#f0f9ff",
+            padding: "12px 16px",
+          },
+        }}
+      />
+
+      <section className="w-full max-w-4xl bg-white rounded-xl shadow-2xl p-6 md:p-10">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Post a New Job
         </h2>
 
-        <form onSubmit={handleAddJob}>
-          <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-            <div>
-              <label className="text-gray-700 " htmlFor="job_title">
-                Job Title
-              </label>
-              <input
-                id="job_title"
-                name="job_title"
-                type="text"
-                required
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              />
-            </div>
-
-            <div>
-              <label className="text-gray-700 " htmlFor="emailAddress">
-                Email Address
-              </label>
-              <input
-                defaultValue={user?.email}
-                readOnly
-                id="emailAddress"
-                type="email"
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              />
-            </div>
-            <div className="flex flex-col gap-2 ">
-              <label className="text-gray-700">Deadline</label>
-
-              {/* Date Picker Input Field */}
-              <DatePicker
-                required
-                className="border p-2 rounded-md"
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 ">
-              <label className="text-gray-700 " htmlFor="category">
-                Category
-              </label>
-              <select
-                required
-                name="category"
-                id="category"
-                className="border p-2 rounded-md"
-              >
-                <option value="Web Development">Web Development</option>
-                <option value="Graphics Design">Graphics Design</option>
-                <option value="Digital Marketing">Digital Marketing</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-gray-700 " htmlFor="min_price">
-                Minimum Price
-              </label>
-              <input
-                required
-                id="min_price"
-                name="min_price"
-                type="number"
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              />
-            </div>
-
-            <div>
-              <label className="text-gray-700 " htmlFor="max_price">
-                Maximum Price
-              </label>
-              <input
-                required
-                id="max_price"
-                name="max_price"
-                type="number"
-                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              />
-            </div>
+        <form
+          onSubmit={handleAddJob}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          <div>
+            <label
+              htmlFor="job_title"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Job Title
+            </label>
+            <input
+              id="job_title"
+              name="job_title"
+              type="text"
+              required
+              placeholder="Ex: Build a React app"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            />
           </div>
-          <div className="flex flex-col gap-2 mt-4">
-            <label className="text-gray-700 " htmlFor="description">
-              Description
+
+          <div>
+            <label
+              htmlFor="emailAddress"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Your Email
+            </label>
+            <input
+              defaultValue={user?.email}
+              readOnly
+              id="emailAddress"
+              type="email"
+              className="w-full px-4 py-2 border bg-gray-100 text-gray-600 border-gray-300 rounded-lg cursor-not-allowed"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Deadline
+            </label>
+            <DatePicker
+              required
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="category"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Category
+            </label>
+            <select
+              required
+              name="category"
+              id="category"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+              <option value="">Select category</option>
+              <option value="Web Development">Web Development</option>
+              <option value="Graphics Design">Graphics Design</option>
+              <option value="Digital Marketing">Digital Marketing</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="min_price"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Minimum Price ($)
+            </label>
+            <input
+              required
+              id="min_price"
+              name="min_price"
+              type="number"
+              step="0.01"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="max_price"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Maximum Price ($)
+            </label>
+            <input
+              required
+              id="max_price"
+              name="max_price"
+              type="number"
+              step="0.01"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label
+              htmlFor="description"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Job Description
             </label>
             <textarea
               required
-              className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
-              name="description"
               id="description"
+              name="description"
+              rows="4"
+              placeholder="Explain what needs to be done..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
             ></textarea>
           </div>
-          <div className="flex justify-end mt-6">
-            <button className="disabled:cursor-not-allowed px-8 py-2.5 leading-5 text-white transition-colors duration-300 transhtmlForm bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-              Save
+
+          <div className="md:col-span-2 text-end">
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Post Job
             </button>
           </div>
         </form>
