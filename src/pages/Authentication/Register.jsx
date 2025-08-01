@@ -5,10 +5,17 @@ import useAuthValue from "../../hooks/useAuthValue";
 import toast from "react-hot-toast";
 import logo from "../../assets/logo.png";
 import { useEffect } from "react";
+import axios from "axios";
 
 const Register = () => {
-  const { createUser, signInWithGoogle, updateUserProfile, setUser, user, loading } =
-    useAuthValue();
+  const {
+    createUser,
+    signInWithGoogle,
+    updateUserProfile,
+    setUser,
+    user,
+    loading,
+  } = useAuthValue();
   const nav = useNavigate();
   useEffect(() => {
     if (user) {
@@ -18,7 +25,14 @@ const Register = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/jwt`,
+        {
+          email: result?.user?.email,
+        },
+        { withCredentials: true }
+      );
       toast.success("Signed in with Google 🎉", {
         style: {
           border: "1px solid #2563EB",
@@ -30,6 +44,7 @@ const Register = () => {
           secondary: "#E0F2FE",
         },
       });
+
       nav("/");
     } catch (err) {
       toast.error("Google Sign-in Failed ❌", err);
@@ -43,9 +58,17 @@ const Register = () => {
     const { name, photo, email, password } = inputValue;
 
     try {
-      await createUser(email, password);
+      const result = await createUser(email, password);
       await updateUserProfile(name, photo);
-      setUser({ ...user, displayName: name, photoURL: photo });
+      setUser({ ...result?.user, displayName: name, photoURL: photo });
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/jwt`,
+        {
+          email: result?.user?.email,
+        },
+        { withCredentials: true }
+      );
+      console.log(data);
 
       toast.success("Signup Successful 🎉", {
         style: {

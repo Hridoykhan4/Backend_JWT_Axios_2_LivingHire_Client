@@ -15,7 +15,8 @@ const MyPostedJobs = () => {
     try {
       if (!user) return;
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/jobs/${user.email}`
+        `${import.meta.env.VITE_API_URL}/jobs/${user.email}`,
+        { withCredentials: true }
       );
       setMyPostedJobs(data);
       setAllJobs(data);

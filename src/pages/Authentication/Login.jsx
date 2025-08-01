@@ -5,9 +5,10 @@ import loginLottie from "../../assets/lottie/loginLottie.json";
 import useAuthValue from "../../hooks/useAuthValue";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+import axios from "axios";
 
 const Login = () => {
-  const { signIn, signInWithGoogle, user, loading } = useAuthValue();
+  const { signIn, signInWithGoogle, user } = useAuthValue();
   const nav = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -20,7 +21,7 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
       toast.success("Signed in with Google 🚀", {
         style: {
           border: "1px solid #2563EB",
@@ -32,6 +33,15 @@ const Login = () => {
           secondary: "#E0F2FE",
         },
       });
+      const email = result?.user?.email;
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/jwt`,
+        {
+          email,
+        },
+        { withCredentials: true }
+      );
+      console.log(data);
       nav(from, { replace: true });
     } catch (err) {
       toast.error("Google Sign-in failed ❌", err);
@@ -45,6 +55,15 @@ const Login = () => {
     const password = form.password.value;
     try {
       const result = await signIn(email, password);
+      // const email = result?.user?.email;
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/jwt`,
+        {
+          email: result?.user?.email
+        },
+        { withCredentials: true }
+      );
+      console.log(data);
       if (result?.user?.email) {
         toast.success("Login Successful 🎉", {
           style: {

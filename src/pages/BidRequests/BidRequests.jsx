@@ -3,31 +3,51 @@ import useAuthValue from "../../hooks/useAuthValue";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+import { useCallback } from "react";
 const BidRequests = () => {
   const [bids, setBids] = useState([]);
   const { user } = useAuthValue();
 
-  const getBidJobs = async () => {
+  const getBidJobs = useCallback(async () => {
     try {
       if (!user) return;
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/bid-requests/${user.email}`
+        `${import.meta.env.VITE_API_URL}/bid-requests/${user.email}`,
+        { withCredentials: true }
       );
       setBids(data);
     } catch (err) {
       toast.error("Failed to load", err);
     }
-  };
-  useEffect(() => {
-    getBidJobs();
   }, [user]);
+  useEffect(() => {
+    if (!user) return;
 
+    getBidJobs();
+    const interval = setInterval(() => {
+      getBidJobs();
+    }, 5000);
 
+    return () => clearInterval(interval);
+  }, [user, getBidJobs]);
 
-    // Handle Status
-    const handleStatus = (id, prevStatus, currentStatus ) => {
-        console.log(id, prevStatus, currentStatus)
+  // Handle Status
+  const handleStatus = async (id, prevStatus, currentStatus) => {
+    if (prevStatus === currentStatus) toast.error(`Updating the same state`);
+    const status = currentStatus;
+    try {
+      const { data } = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/update-bidStatus/${id}`,
+        { status }
+      );
+      if (data.modifiedCount) {
+        toast.success(`Status Updated`);
+        getBidJobs();
+      }
+    } catch (err) {
+      console.log(err);
     }
+  };
 
   return (
     <section className="container px-4 mx-auto pt-12">
@@ -148,15 +168,18 @@ const BidRequests = () => {
                               `}
                         >
                           <span className="h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
-                          <h2 className="text-sm font-normal ">Pending</h2>
+                          <h2 className="text-sm font-normal ">{bid.status}</h2>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm whitespace-nowrap">
                         <div className="flex items-center gap-x-6">
+                          {/* Accept button: In Progress */}
                           <button
-                            onClick={() => handleStatus(bid._id, bid.status, 'In Progress')}
+                            onClick={() =>
+                              handleStatus(bid._id, bid.status, "In Progress")
+                            }
                             disabled={bid.status === "Complete"}
-                            className="text-gray-500 transition-colors duration-200  hover:text-red-500 focus:outline-none"
+                            className="text-gray-500 transition-colors duration-200  disabled:text-gray-500 disabled:cursor-not-allowed hover:text-yellow-500 focus:outline-none"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -174,7 +197,14 @@ const BidRequests = () => {
                             </svg>
                           </button>
 
-                          <button className="text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none">
+                          {/* Reject button */}
+                          <button
+                            onClick={() =>
+                              handleStatus(bid._id, bid.status, "Rejected")
+                            }
+                            disabled={bid.status === "Complete"}
+                            className="text-gray-500 transition-colors duration-200  disabled:text-gray-500 disabled:cursor-not-allowed hover:text-yellow-500 focus:outline-none"
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"

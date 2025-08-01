@@ -3,12 +3,13 @@ import useAuthValue from "../../hooks/useAuthValue";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
+import { useCallback } from "react";
 
 const MyBids = () => {
   const [bids, setBids] = useState([]);
   const { user } = useAuthValue();
 
-  const getBidJobs = async () => {
+  const getBidJobs = useCallback(async () => {
     try {
       if (!user) return;
       const { data } = await axios.get(
@@ -18,10 +19,36 @@ const MyBids = () => {
     } catch (err) {
       toast.error("Failed to load", err);
     }
-  };
-  useEffect(() => {
-    getBidJobs();
   }, [user]);
+  useEffect(() => {
+    if (!user) return;
+
+    getBidJobs();
+    const interval = setInterval(() => {
+      getBidJobs();
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [user, getBidJobs]);
+
+  const handleStatus = async (id) => {
+    // if (prevStatus === currentStatus) toast.error(`Updating the same state`);
+    const status = "Complete";
+    try {
+      const { data } = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/update-bidStatus/${id}`,
+        { status }
+      );
+      if (data.modifiedCount) {
+        toast.success(`Status Updated`);
+        getBidJobs();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <section className="container px-4 mx-auto my-12">
@@ -139,12 +166,14 @@ const MyBids = () => {
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm whitespace-nowrap">
+                        {/* Complete Button */}
                         <button
+                          onClick={() => handleStatus(bid._id)}
                           disabled={bid.status !== "In Progress"}
                           title={
                             bid.status !== "In Progress"
                               ? "Wait for approval"
-                              : ` Mark Complete`
+                              : ` Mark If Completed`
                           }
                           className="text-gray-500 transition-colors duration-200 disabled:hover:text-gray-500   hover:text-red-500 focus:outline-none disabled:cursor-not-allowed"
                         >
