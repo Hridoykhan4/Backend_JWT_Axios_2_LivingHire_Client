@@ -4,11 +4,17 @@ import Lottie from "lottie-react";
 import useAuthValue from "../../hooks/useAuthValue";
 import toast from "react-hot-toast";
 import logo from "../../assets/logo.png";
+import { useEffect } from "react";
 
 const Register = () => {
-  const { createUser, signInWithGoogle, updateUserProfile, setUser, user } =
+  const { createUser, signInWithGoogle, updateUserProfile, setUser, user, loading } =
     useAuthValue();
   const nav = useNavigate();
+  useEffect(() => {
+    if (user) {
+      nav("/");
+    }
+  }, [user, nav]);
 
   const handleGoogleLogin = async () => {
     try {
@@ -64,6 +70,7 @@ const Register = () => {
       });
     }
   };
+  if (user || loading) return;
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
@@ -81,10 +88,9 @@ const Register = () => {
             onClick={handleGoogleLogin}
             className="flex w-full mt-6 items-center justify-center gap-2 text-gray-700 border border-gray-300 rounded-lg py-2 hover:shadow-md hover:bg-gray-50 transition duration-200"
           >
-            <svg className="w-6 h-6" viewBox="0 0 40 40">
+            {/* <svg className="w-6 h-6" viewBox="0 0 40 40">
               <path fill="#FFC107" d="M36.3 16.7H20v6.7h9.4..." />
-              {/* shortened path */}
-            </svg>
+            </svg> */}
             <span className="font-medium">Sign up with Google</span>
           </button>
 

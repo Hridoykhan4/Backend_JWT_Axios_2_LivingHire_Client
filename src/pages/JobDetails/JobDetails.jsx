@@ -21,7 +21,11 @@ const JobDetails = () => {
 
     const { price, ...rest } = inputValues;
     rest.jobId = job._id;
-    rest.buyer_email = job.buyer.email;
+    rest.buyer = {
+      email: job.buyer.email,
+      name: job.buyer.name,
+      photo: job.buyer.photo,
+    };
     rest.bid_price = parseFloat(price);
     rest.bidder_name = user?.displayName;
 

@@ -1,13 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import Lottie from "lottie-react";
 import loginLottie from "../../assets/lottie/loginLottie.json";
 import useAuthValue from "../../hooks/useAuthValue";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 const Login = () => {
-  const { signIn, signInWithGoogle } = useAuthValue();
+  const { signIn, signInWithGoogle, user, loading } = useAuthValue();
   const nav = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
+
+  useEffect(() => {
+    if (user) {
+      nav("/");
+    }
+  }, [nav, user]);
 
   const handleGoogleLogin = async () => {
     try {
@@ -23,7 +32,7 @@ const Login = () => {
           secondary: "#E0F2FE",
         },
       });
-      nav("/");
+      nav(from, { replace: true });
     } catch (err) {
       toast.error("Google Sign-in failed ❌", err);
     }
@@ -48,7 +57,7 @@ const Login = () => {
             secondary: "#ECFDF5",
           },
         });
-        nav("/");
+        nav(from, { replace: true });
       }
     } catch (err) {
       toast.error("Login failed: " + err.message, {
@@ -61,6 +70,7 @@ const Login = () => {
     }
   };
 
+  if (user) return;
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
       <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-xl shadow-lg lg:max-w-4xl">
@@ -81,10 +91,10 @@ const Login = () => {
             onClick={handleGoogleLogin}
             className="flex w-full mt-6 items-center justify-center gap-2 text-gray-700 border border-gray-300 rounded-lg py-2 hover:shadow-md hover:bg-gray-50 transition duration-200"
           >
-            <svg className="w-6 h-6" viewBox="0 0 40 40">
+            {/*    <svg className="w-6 h-6" viewBox="0 0 40 40">
               <path fill="#FFC107" d="M36.3 16.7H20v6.7h9.4..." />
-              {/* Remaining path shortened for brevity */}
-            </svg>
+
+            </svg> */}
             <span className="font-medium">Sign in with Google</span>
           </button>
 

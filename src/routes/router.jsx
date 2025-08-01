@@ -9,6 +9,8 @@ import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import MyPostedJobs from "../pages/MyPostedJobs/MyPostedJobs";
 import UpdateJob from "../pages/UpdateJob/UpdateJob";
 import MyBids from "../pages/MyBids/MyBids";
+import PrivateRoute from "./PrivateRoute";
+import BidRequests from "../pages/BidRequests/BidRequests";
 
 const router = createBrowserRouter([
   {
@@ -30,25 +32,53 @@ const router = createBrowserRouter([
       },
       {
         path: "/add-job",
-        element: <AddJobs></AddJobs>,
+        element: (
+          <PrivateRoute>
+            <AddJobs></AddJobs>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/my-posted-jobs",
-        element: <MyPostedJobs></MyPostedJobs>,
+        element: (
+          <PrivateRoute>
+            <MyPostedJobs></MyPostedJobs>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/update/:id",
-        element: <UpdateJob></UpdateJob>,
+        element: (
+          <PrivateRoute>
+            <UpdateJob></UpdateJob>
+          </PrivateRoute>
+        ),
         loader: ({ params }) =>
           fetch(`${import.meta.env.VITE_API_URL}/job/${params.id}`),
       },
       {
         path: "/my-bids",
-        element: <MyBids></MyBids>,
+        element: (
+          <PrivateRoute>
+            <MyBids></MyBids>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/bid-requests",
+        element: (
+          <PrivateRoute>
+            <BidRequests></BidRequests>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/job/:id",
-        element: <JobDetails></JobDetails>,
+        element: (
+          <PrivateRoute>
+            <JobDetails></JobDetails>
+          </PrivateRoute>
+        ),
         loader: ({ params }) =>
           fetch(`${import.meta.env.VITE_API_URL}/job/${params.id}`),
       },
