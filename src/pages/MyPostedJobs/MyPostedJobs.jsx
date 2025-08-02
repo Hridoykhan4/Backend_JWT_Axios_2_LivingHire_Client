@@ -5,8 +5,10 @@ import useAuthValue from "../../hooks/useAuthValue";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const MyPostedJobs = () => {
+  const axiosSecure = useAxiosSecure();
   const [myPostedJobs, setMyPostedJobs] = useState([]);
   const [allJobs, setAllJobs] = useState([]);
   const { user } = useAuthValue();
@@ -14,10 +16,7 @@ const MyPostedJobs = () => {
   const getPostedJobs = async () => {
     try {
       if (!user) return;
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/jobs/${user.email}`,
-        { withCredentials: true }
-      );
+      const { data } = await axiosSecure(`/jobs/${user.email}`);
       setMyPostedJobs(data);
       setAllJobs(data);
     } catch (err) {

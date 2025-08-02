@@ -1,61 +1,69 @@
-import { useState } from "react";
 import useAuthValue from "../../hooks/useAuthValue";
-import axios from "axios";
 import toast from "react-hot-toast";
-import { useEffect } from "react";
-import { useCallback } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 const BidRequests = () => {
-  const [bids, setBids] = useState([]);
+  // const [bids, setBids] = useState([]);
   const { user } = useAuthValue();
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
-  const getBidJobs = useCallback(async () => {
-    try {
-      if (!user) return;
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/bid-requests/${user.email}`,
-        { withCredentials: true }
-      );
-      setBids(data);
-    } catch (err) {
-      toast.error("Failed to load", err);
-    }
-  }, [user]);
-  useEffect(() => {
-    if (!user) return;
+  const getBidJobs = async () => {
+    const { data } = await axiosSecure(`/bid-requests/${user?.email}`);
+    return data;
+  };
+  const {
+    isPending,
+    error,
+    isError,
+    data: bids = [],
+  } = useQuery({
+    queryKey: ["bid-requests", user?.email],
+    queryFn: () => getBidJobs(),
+  });
 
-    getBidJobs();
-    const interval = setInterval(() => {
-      getBidJobs();
-    }, 5000);
+  const { mutateAsync } = useMutation({
+    mutationFn: async ({ id, status }) => {
+      const { data } = await axiosSecure.patch(`/update-bidStatus/${id}`, {
+        status,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      // Easy system
+      // refetch()
 
-    return () => clearInterval(interval);
-  }, [user, getBidJobs]);
+      // Now hard One for auto refetching from any components
+      queryClient.invalidateQueries({ queryKey: ["bid-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["my-bids"] });
 
-  // Handle Status
-  const handleStatus = async (id, prevStatus, currentStatus) => {
-    if (prevStatus === currentStatus) toast.error(`Updating the same state`);
-    const status = currentStatus;
-    try {
-      const { data } = await axios.patch(
-        `${import.meta.env.VITE_API_URL}/update-bidStatus/${id}`,
-        { status }
-      );
-      if (data.modifiedCount) {
-        toast.success(`Status Updated`);
-        getBidJobs();
-      }
-    } catch (err) {
-      console.log(err);
-    }
+      toast.success(`Updated Successfully`, {
+        position: "top-right",
+        className: "font-semibold text-xl",
+      });
+    },
+  });
+
+  const handleStatus = async (id, prevState, status) => {
+    if (prevState === status) return console.log(`Gajati hai kya`);
+    await mutateAsync({ id, status });
   };
 
+  if (isPending) return <LoadingSpinner></LoadingSpinner>;
+  if (isError)
+    return (
+      <p className="text-center text-red-600  underline font-semibold ">
+        Error: {error.message}
+      </p>
+    );
   return (
     <section className="container px-4 mx-auto pt-12">
       <div className="flex items-center gap-x-3">
         <h2 className="text-lg font-medium text-gray-800 ">Bid Requests</h2>
 
         <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full ">
-          {bids.length} Requests
+          {bids?.length} Requests
         </span>
       </div>
 
@@ -168,7 +176,9 @@ const BidRequests = () => {
                               `}
                         >
                           <span className="h-1.5 w-1.5 rounded-full bg-yellow-500"></span>
-                          <h2 className="text-sm font-normal ">{bid.status}</h2>
+                          <h2 className="text-sm font-normal ">
+                            {bid?.status}
+                          </h2>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm whitespace-nowrap">

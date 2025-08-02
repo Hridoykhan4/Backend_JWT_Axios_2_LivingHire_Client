@@ -75,6 +75,7 @@ const JobDetails = () => {
       />
 
       <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
+   
         {/* Job Details */}
         <div className="flex-1 bg-white shadow-xl rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
