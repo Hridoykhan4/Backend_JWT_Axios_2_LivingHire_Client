@@ -1,4 +1,5 @@
-import logo from '../assets/logo.png'
+import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 const Footer = () => {
   return (
     <footer className="bg-white shadow-sm">
@@ -6,8 +7,12 @@ const Footer = () => {
       <div className="container px-6 py-8 mx-auto">
         <div className="flex flex-col items-center text-center">
           <div className="flex gap-2 items-center">
-            <img className="w-auto h-7" src={logo} alt="" />
-            <span>SoloSphere</span>
+            <Link to="/" className="flex items-center gap-2">
+              <img className="h-8 w-auto" src={logo} alt="Living Hire Logo" />
+              <span className="text-xl font-bold text-gray-800 tracking-wide">
+                Living <span className="text-blue-600">Hire</span>
+              </span>
+            </Link>
           </div>
 
           <div className="flex flex-wrap justify-center mt-6 -mx-4">

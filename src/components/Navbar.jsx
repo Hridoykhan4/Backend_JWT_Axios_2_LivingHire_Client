@@ -5,30 +5,29 @@ import toast from "react-hot-toast";
 const Navbar = () => {
   const { user, logOut } = useAuthValue();
 
-  const handleLogOut = () => {
-    logOut()
-      .then(() => {
-        toast.success("Successfully logged out 👋", {
-          style: {
-            border: "1px solid #4B5563", // Tailwind gray-700
-            padding: "12px 16px",
-            color: "#1F2937", // Tailwind gray-800
-          },
-          iconTheme: {
-            primary: "#2563EB", // Tailwind blue-600
-            secondary: "#F9FAFB", // Tailwind gray-50
-          },
-        });
-      })
-      .catch(() => {
-        toast.error("Logout failed. Try again.", {
-          style: {
-            border: "1px solid #DC2626", // red-600
-            padding: "12px 16px",
-            color: "#991B1B",
-          },
-        });
+  const handleLogOut = async () => {
+    await logOut();
+    try {
+      toast.success("Successfully logged out 👋", {
+        style: {
+          border: "1px solid #4B5563", // Tailwind gray-700
+          padding: "12px 16px",
+          color: "#1F2937", // Tailwind gray-800
+        },
+        iconTheme: {
+          primary: "#2563EB", // Tailwind blue-600
+          secondary: "#F9FAFB", // Tailwind gray-50
+        },
       });
+    } catch (err) {
+      toast.error(`Logout failed. Try again. ${err}`, {
+        style: {
+          border: "1px solid #DC2626", // red-600
+          padding: "12px 16px",
+          color: "#991B1B",
+        },
+      });
+    }
   };
 
   return (
@@ -99,6 +98,14 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 p-3 shadow-lg bg-white rounded-xl w-56 z-[999]"
             >
+              <li>
+                <NavLink
+                  to="/all-jobs"
+                  className="hover:text-blue-600 transition"
+                >
+                  📌 All Jobs
+                </NavLink>
+              </li>
               <li>
                 <NavLink
                   to="/add-job"

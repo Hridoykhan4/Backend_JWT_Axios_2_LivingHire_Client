@@ -36,10 +36,14 @@ const AuthProvider = ({ children }) => {
 
   const logOut = async () => {
     setLoading(true);
-    const { data } = await axios(`${import.meta.env.VITE_API_URL}/logout`, {
-      withCredentials: true,
-    });
-    console.log(`Sign Out: ${data}`);
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_API_URL}/logout`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(`Sign Out: `, data);
     return signOut(auth);
   };
 

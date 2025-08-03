@@ -1,12 +1,47 @@
-# React + Vite
+# 🚀 Living_Hire
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Living_Hire** is a modern job marketplace platform where employers can post jobs and freelancers can bid to get hired. Built with **React**, **Express**, and **MongoDB**, it features real-time bidding, secure authentication using JWT, and a responsive UI styled with **Tailwind CSS + DaisyUI**.
 
-Currently, two official plugins are available:
+🔗 **Live Site:** [https://living-hire.web.app](https://living-hire.web.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🌟 Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 🧑‍💼 Employer & Freelancer roles
+- ✅ Secure JWT-based authentication with cookies
+- 🛡️ Route protection with Firebase Auth
+- 🔄 Real-time bidding system
+- 🔍 Job listing with filtering & sorting
+- 💡 Clean and responsive UI with Tailwind CSS and DaisyUI
+- 📅 Date pickers for job deadlines
+- 🔥 Toast notifications for user feedback
+
+---
+
+## 📦 Tech Stack
+
+### ✨ Frontend (Client)
+
+- React 19
+- React Router DOM 7
+- Tailwind CSS 4
+- DaisyUI 5
+- Axios
+- React Hot Toast
+- Firebase Auth
+- React Query (TanStack Query)
+- Lottie animations
+- Swiper slider
+
+### 🚀 Backend (Server)
+
+- Node.js
+- Express.js
+- MongoDB (with native driver)
+- JSON Web Token (JWT)
+- dotenv
+- cookie-parser
+- CORS
+
+---

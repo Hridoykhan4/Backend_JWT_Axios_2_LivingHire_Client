@@ -41,7 +41,7 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      console.log(data);
+      
       nav(from, { replace: true });
     } catch (err) {
       toast.error("Google Sign-in failed ❌", err);

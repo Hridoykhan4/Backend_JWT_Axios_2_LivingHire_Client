@@ -53,9 +53,22 @@ const JobDetails = () => {
       if (data.insertedId) {
         toast.success(`Placed Bid for ${job?.job_title}`);
         nav(`/my-bids`);
+      } else {
+        toast.error(`You have already placed a bid on this job.`);
       }
     } catch (err) {
-      console.log(err);
+      const serverMessage = err?.response?.data?.message;
+      if (err.response?.status === 409) {
+        toast.error(
+          serverMessage || "You already submitted a bid for this job."
+        );
+        nav(-1);
+      } else {
+        toast.error(
+          serverMessage || "Something went wrong while placing the bid."
+        );
+        console.log(err);
+      }
     }
   };
 
@@ -75,7 +88,6 @@ const JobDetails = () => {
       />
 
       <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
-   
         {/* Job Details */}
         <div className="flex-1 bg-white shadow-xl rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
