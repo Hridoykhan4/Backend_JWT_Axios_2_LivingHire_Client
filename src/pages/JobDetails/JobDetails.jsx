@@ -5,13 +5,19 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import useAuthValue from "../../hooks/useAuthValue";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
 
 const JobDetails = () => {
   const job = useLoaderData();
   const { user } = useAuthValue();
   const nav = useNavigate();
   const [startDate, setStartDate] = useState(new Date());
-
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
   const handleSubmitBids = async (e) => {
     e.preventDefault();
     if (user?.email === job.buyer.email)
@@ -29,13 +35,12 @@ const JobDetails = () => {
     rest.bid_price = parseFloat(price);
     rest.bidder_name = user?.displayName;
 
-    if (rest.bid_price < job?.min_price)
+    if (rest.bid_price > job?.max_price)
       return toast.error("Offer more or at least equal to Minimum price");
 
     const [day, month, year] = job.deadline.split("-");
     const parsedJobDeadline = new Date(`${year}-${month}-${day}`);
     const bidDeadline = startDate;
-
     if (bidDeadline > parsedJobDeadline)
       return toast.error("Bid deadline cannot exceed the job deadline.");
 
@@ -44,7 +49,6 @@ const JobDetails = () => {
     rest.category = job?.category;
     rest.job_title = job?.job_title;
     rest.bidder_email = user?.email;
-
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/bid`,

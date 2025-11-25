@@ -12,6 +12,8 @@ import MyBids from "../pages/MyBids/MyBids";
 import PrivateRoute from "./PrivateRoute";
 import BidRequests from "../pages/BidRequests/BidRequests";
 import AllJobs from "../pages/AllJobs/AllJobs";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ViewApplicants from "../pages/ViewApplicants/ViewApplicants";
 
 const router = createBrowserRouter([
   {
@@ -32,8 +34,8 @@ const router = createBrowserRouter([
         element: <Register></Register>,
       },
       {
-        path: '/all-jobs',
-        element: <AllJobs></AllJobs>
+        path: "/all-jobs",
+        element: <AllJobs></AllJobs>,
       },
       {
         path: "/add-job",
@@ -60,6 +62,7 @@ const router = createBrowserRouter([
         ),
         loader: ({ params }) =>
           fetch(`${import.meta.env.VITE_API_URL}/job/${params.id}`),
+        hydrateFallbackElement: <LoadingSpinner></LoadingSpinner>
       },
       {
         path: "/my-bids",
@@ -86,6 +89,17 @@ const router = createBrowserRouter([
         ),
         loader: ({ params }) =>
           fetch(`${import.meta.env.VITE_API_URL}/job/${params.id}`),
+        hydrateFallbackElement: <LoadingSpinner></LoadingSpinner>,
+      },
+      {
+        path: "/viewApplicants/:id",
+        element: (
+          <PrivateRoute>
+            <ViewApplicants></ViewApplicants>
+          </PrivateRoute>
+        ),
+        loader: ({params}) => fetch(`${import.meta.env.VITE_API_URL}/view-applicants/${params.id}`),
+        hydrateFallbackElement: <LoadingSpinner></LoadingSpinner>
       },
     ],
   },

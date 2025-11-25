@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 const Slide = ({ image, text }) => {
   return (
     <div
-      className="w-full h-[38rem] bg-center bg-cover"
+      className="w-full h-[550px] bg-center bg-cover"
       style={{ backgroundImage: `url(${image})` }}
     >
-      <div className="flex items-center justify-center w-full h-full bg-black/60">
+      <div className="flex items-center justify-center w-full h-full bg-black/80">
         <div className="text-center px-4">
           <h1 className="text-3xl lg:text-5xl font-extrabold text-white leading-tight drop-shadow-md">
             {text}

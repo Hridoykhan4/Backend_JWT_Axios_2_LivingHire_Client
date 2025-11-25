@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -12,8 +13,10 @@ const MyPostedJobs = () => {
   const [myPostedJobs, setMyPostedJobs] = useState([]);
   const [allJobs, setAllJobs] = useState([]);
   const { user } = useAuthValue();
+  const [loading, setLoading] = useState(true);
 
   const getPostedJobs = async () => {
+    setLoading(true);
     try {
       if (!user) return;
       const { data } = await axiosSecure(`/jobs/${user.email}`);
@@ -21,15 +24,15 @@ const MyPostedJobs = () => {
       setAllJobs(data);
     } catch (err) {
       toast.error("Failed to load", err);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
     getPostedJobs();
   }, [user]);
 
-  if (!user?.email) {
-    return <LoadingSpinner />;
-  }
+  if (!user?.email) return <LoadingSpinner />;
 
   const handleDelete = async (id) => {
     try {
@@ -70,10 +73,12 @@ const MyPostedJobs = () => {
           <div className="ms-auto">
             <select
               onChange={handleFilterByCategory}
-              defaultValue="Pick a Category"
+              defaultValue=""
               className="select select-info"
             >
-              <option disabled={true}>Filter By Category</option>
+              <option value="" disabled={true}>
+                Filter By Category
+              </option>
               <option value={`All`}>All</option>
               <option value={`Web Development`}>Web</option>
               <option value={`Graphics Design`}>Graphics</option>
@@ -83,7 +88,9 @@ const MyPostedJobs = () => {
         )}
       </div>
 
-      {myPostedJobs.length > 0 ? (
+      {loading ? (
+        <LoadingSpinner></LoadingSpinner>
+      ) : myPostedJobs.length > 0 ? (
         <div className="flex flex-col mt-6">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -126,7 +133,7 @@ const MyPostedJobs = () => {
                         scope="col"
                         className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500"
                       >
-                        Description
+                        Total Applicants
                       </th>
 
                       <th className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500">
@@ -163,11 +170,8 @@ const MyPostedJobs = () => {
                             </p>
                           </div>
                         </td>
-                        <td
-                          title={job.description}
-                          className="px-4 py-4 text-sm text-gray-500  whitespace-nowrap"
-                        >
-                          {job?.description.slice(0, 19)}....
+                        <td className="px-4 py-4 text-sm text-gray-500  whitespace-nowrap">
+                          {job?.totalApplicants || 0}
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div className="flex items-center gap-x-6">
@@ -207,6 +211,30 @@ const MyPostedJobs = () => {
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                                />
+                              </svg>
+                            </Link>
+                            <Link
+                              to={`/viewApplicants/${job._id}`}
+                              className="text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                                 />
                               </svg>
                             </Link>

@@ -7,7 +7,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
 const UpdateJob = () => {
-  const job = useLoaderData();
+  const job = useLoaderData() || {};
   const nav = useNavigate();
   const { id } = useParams();
   const { user } = useAuthValue();
@@ -26,7 +26,6 @@ const UpdateJob = () => {
     deadline ? new Date(deadline.split("-").reverse().join("-")) : new Date()
   );
 
-
   const handleUpdateJob = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -35,7 +34,10 @@ const UpdateJob = () => {
     const { min_price, max_price, ...others } = formValues;
     others.min_price = parseFloat(min_price);
     others.max_price = parseFloat(max_price);
-    others.deadline = startDate.toLocaleDateString("en-GB");
+    others.deadline = startDate
+      .toLocaleDateString("en-GB")
+      .split("/")
+      .join("-");
     others.bid_count = bid_count;
     others.buyer = {
       email: buyer.email,
@@ -66,9 +68,15 @@ const UpdateJob = () => {
           ✏️ Update Job
         </h2>
 
-        <form onSubmit={handleUpdateJob} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleUpdateJob}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           <div>
-            <label htmlFor="job_title" className="block text-gray-700 font-medium mb-1">
+            <label
+              htmlFor="job_title"
+              className="block text-gray-700 font-medium mb-1"
+            >
               Job Title
             </label>
             <input
@@ -82,7 +90,9 @@ const UpdateJob = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Email Address</label>
+            <label className="block text-gray-700 font-medium mb-1">
+              Email Address
+            </label>
             <input
               value={buyer.email}
               readOnly
@@ -92,7 +102,9 @@ const UpdateJob = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Deadline</label>
+            <label className="block text-gray-700 font-medium mb-1">
+              Deadline
+            </label>
             <DatePicker
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               selected={startDate}
@@ -101,7 +113,10 @@ const UpdateJob = () => {
           </div>
 
           <div>
-            <label htmlFor="category" className="block text-gray-700 font-medium mb-1">
+            <label
+              htmlFor="category"
+              className="block text-gray-700 font-medium mb-1"
+            >
               Category
             </label>
             <select
@@ -117,7 +132,10 @@ const UpdateJob = () => {
           </div>
 
           <div>
-            <label htmlFor="min_price" className="block text-gray-700 font-medium mb-1">
+            <label
+              htmlFor="min_price"
+              className="block text-gray-700 font-medium mb-1"
+            >
               Minimum Price ($)
             </label>
             <input
@@ -131,7 +149,10 @@ const UpdateJob = () => {
           </div>
 
           <div>
-            <label htmlFor="max_price" className="block text-gray-700 font-medium mb-1">
+            <label
+              htmlFor="max_price"
+              className="block text-gray-700 font-medium mb-1"
+            >
               Maximum Price ($)
             </label>
             <input
@@ -145,7 +166,10 @@ const UpdateJob = () => {
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="description" className="block text-gray-700 font-medium mb-1">
+            <label
+              htmlFor="description"
+              className="block text-gray-700 font-medium mb-1"
+            >
               Job Description
             </label>
             <textarea

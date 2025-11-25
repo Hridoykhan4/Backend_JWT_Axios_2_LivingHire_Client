@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import axios from "axios";
 
 const Login = () => {
-  const { signIn, signInWithGoogle, user } = useAuthValue();
+  const { signIn, signInWithGoogle, user, loading } = useAuthValue();
   const nav = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -41,7 +41,7 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      
+
       nav(from, { replace: true });
     } catch (err) {
       toast.error("Google Sign-in failed ❌", err);
@@ -59,7 +59,7 @@ const Login = () => {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/jwt`,
         {
-          email: result?.user?.email
+          email: result?.user?.email,
         },
         { withCredentials: true }
       );
@@ -92,7 +92,7 @@ const Login = () => {
   if (user) return;
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
-      <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-xl shadow-lg lg:max-w-4xl">
+      <div className="flex w-full  overflow-hidden bg-white rounded-xl shadow-lg lg:max-w-4xl">
         <div className="hidden md:flex w-1/2 bg-gray-100 p-6 items-center justify-center">
           <Lottie animationData={loginLottie} loop={true} />
         </div>
@@ -157,7 +157,7 @@ const Login = () => {
                 type="submit"
                 className="w-full bg-gray-800 text-white py-2.5 rounded-md hover:bg-gray-700 transition duration-200"
               >
-                Sign In
+                {loading ? "Singing in ..." : "Sign In"}
               </button>
             </div>
           </form>

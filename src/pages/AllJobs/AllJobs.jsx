@@ -1,10 +1,11 @@
 import JobCard from "../../components/JobCard";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useEffect, useState } from "react";
 
 const AllJobs = () => {
   const [jobs, setJobs] = useState([]);
-  const itemsPerPage = 10;
+  const itemsPerPage = 16;
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
   const [count, setCount] = useState(0);
@@ -57,7 +58,7 @@ const AllJobs = () => {
   return (
     <div className="container px-6 py-10 mx-auto min-h-[calc(100vh-306px)] flex flex-col justify-between">
       <div>
-        <div className="flex flex-col md:flex-row justify-center items-center gap-5 ">
+        <div className="flex flex-col flex-wrap md:flex-row justify-center items-center gap-5 ">
           <div>
             <select
               onChange={(e) => {
@@ -66,8 +67,7 @@ const AllJobs = () => {
               }}
               value={filter}
               name="category"
-              id="category"
-              className="border p-4 rounded-lg"
+              className="border  p-4 rounded-lg"
             >
               <option value="">Filter By Category</option>
               <option value="Web Development">Web Development</option>
@@ -106,7 +106,7 @@ const AllJobs = () => {
               value={sort}
               name="category"
               id="category"
-              className="border p-4 rounded-md"
+              className="border  p-4 rounded-md"
             >
               <option value="">Sort By Bid Price</option>
               <option value="dsc">Descending Order</option>
@@ -117,80 +117,88 @@ const AllJobs = () => {
             Reset
           </button>
         </div>
-        <div className="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {jobs.map((job) => (
-            <JobCard job={job} key={job._id}></JobCard>
-          ))}
-        </div>
+
+        {jobs?.length === 0 ? (
+          <div className="text-lg mt-4 font-semibold text-red-700">
+            Sorry, we found no Job !!{" "}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 mt-8 xl:mt-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {jobs.map((job) => (
+              <JobCard job={job} key={job._id}></JobCard>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Pagination Section */}
-      <div className="flex flex-wrap gap-4 justify-center items-center mt-9">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-          className="px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-blue-500  hover:text-white"
-        >
-          <div className="flex items-center -mx-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 mx-1 rtl:-scale-x-100"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M7 16l-4-4m0 0l4-4m-4 4h18"
-              />
-            </svg>
-
-            <span className="mx-1">previous</span>
-          </div>
-        </button>
-
-        {pages.map((btnNum) => (
+      {numberOfPages > 1 && jobs?.length > 0 && (
+        <div className="flex flex-wrap gap-4 justify-center items-center mt-9">
           <button
-            onClick={() => {
-              setCurrentPage(btnNum);
-            }}
-            className={`${
-              currentPage === btnNum ? "bg-blue-500 text-white" : ""
-            } px-4 py-2 mx-1 transition-colors duration-300 transform  rounded-md sm:inline hover:bg-blue-500  hover:text-white`}
-            key={btnNum}
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className="px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-blue-500  hover:text-white"
           >
-            {btnNum}
+            <div className="flex items-center -mx-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6 mx-1 rtl:-scale-x-100"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                />
+              </svg>
+
+              <span className="mx-1">previous</span>
+            </div>
           </button>
-        ))}
 
-        {/* Next button */}
-        <button
-          disabled={currentPage === numberOfPages}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-gray-200 rounded-md hover:bg-blue-500 disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:text-white disabled:cursor-not-allowed disabled:text-gray-500"
-        >
-          <div className="flex items-center -mx-1">
-            <span className="mx-1">Next</span>
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 mx-1 rtl:-scale-x-100"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {pages.map((btnNum) => (
+            <button
+              onClick={() => {
+                setCurrentPage(btnNum);
+              }}
+              className={`${
+                currentPage === btnNum ? "bg-blue-500 text-white" : ""
+              } px-4 py-2 mx-1 transition-colors duration-300 transform  rounded-md sm:inline hover:bg-blue-500  hover:text-white`}
+              key={btnNum}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </div>
-        </button>
-      </div>
+              {btnNum}
+            </button>
+          ))}
+
+          {/* Next button */}
+          <button
+            disabled={currentPage === numberOfPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className="px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-gray-200 rounded-md hover:bg-blue-500 disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:text-white disabled:cursor-not-allowed disabled:text-gray-500"
+          >
+            <div className="flex items-center -mx-1">
+              <span className="mx-1">Next</span>
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6 mx-1 rtl:-scale-x-100"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

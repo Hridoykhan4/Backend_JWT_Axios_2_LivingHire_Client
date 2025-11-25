@@ -4,10 +4,9 @@ import useAuthValue from "../hooks/useAuthValue";
 import toast from "react-hot-toast";
 const Navbar = () => {
   const { user, logOut } = useAuthValue();
-
   const handleLogOut = async () => {
-    await logOut();
     try {
+      await logOut();
       toast.success("Successfully logged out 👋", {
         style: {
           border: "1px solid #4B5563", // Tailwind gray-700
@@ -29,6 +28,47 @@ const Navbar = () => {
       });
     }
   };
+
+  const navLinks = (
+    <>
+      <li>
+        <NavLink to="/all-jobs" className="hover:text-blue-600 transition">
+          📌 All Jobs
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/add-job" className="hover:text-blue-600 transition">
+          ➕ Add Job
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/my-posted-jobs"
+          className="hover:text-blue-600 transition"
+        >
+          📄 My Posted Jobs
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/my-bids" className="hover:text-blue-600 transition">
+          💼 My Bids
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/bid-requests" className="hover:text-blue-600 transition">
+          📥 Bid Requests
+        </NavLink>
+      </li>
+      <li className="pt-2 border-t mt-2">
+        <button
+          onClick={handleLogOut}
+          className="btn btn-sm w-full bg-red-500 hover:bg-red-600 text-white"
+        >
+          Logout
+        </button>
+      </li>
+    </>
+  );
 
   return (
     <header className="navbar bg-white shadow-sm px-4 md:px-6 lg:px-10 sticky top-0 z-50">
@@ -98,54 +138,7 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 p-3 shadow-lg bg-white rounded-xl w-56 z-[999]"
             >
-              <li>
-                <NavLink
-                  to="/all-jobs"
-                  className="hover:text-blue-600 transition"
-                >
-                  📌 All Jobs
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/add-job"
-                  className="hover:text-blue-600 transition"
-                >
-                  ➕ Add Job
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/my-posted-jobs"
-                  className="hover:text-blue-600 transition"
-                >
-                  📄 My Posted Jobs
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/my-bids"
-                  className="hover:text-blue-600 transition"
-                >
-                  💼 My Bids
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/bid-requests"
-                  className="hover:text-blue-600 transition"
-                >
-                  📥 Bid Requests
-                </NavLink>
-              </li>
-              <li className="pt-2 border-t mt-2">
-                <button
-                  onClick={handleLogOut}
-                  className="btn btn-sm w-full bg-red-500 hover:bg-red-600 text-white"
-                >
-                  Logout
-                </button>
-              </li>
+              {navLinks}
             </ul>
           </div>
         )}

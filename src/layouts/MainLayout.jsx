@@ -7,9 +7,7 @@ const MainLayout = () => {
   const navigation = useNavigation();
   return (
     <>
-      <header>
-        <Navbar></Navbar>
-      </header>
+      <Navbar></Navbar>
 
       <main className="min-h-[calc(100vh-302px)]">
         {navigation.state === "loading" ? (

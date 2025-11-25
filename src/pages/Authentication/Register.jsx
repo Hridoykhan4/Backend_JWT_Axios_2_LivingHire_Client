@@ -14,7 +14,6 @@ const Register = () => {
     updateUserProfile,
     setUser,
     user,
-    loading,
   } = useAuthValue();
   const nav = useNavigate();
   useEffect(() => {
@@ -47,6 +46,7 @@ const Register = () => {
 
       nav("/");
     } catch (err) {
+      console.log(err);
       toast.error("Google Sign-in Failed ❌", err);
     }
   };
@@ -93,11 +93,11 @@ const Register = () => {
       });
     }
   };
-  if (user || loading) return;
+  if (user) return;
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
-      <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg lg:max-w-4xl">
+      <div className="flex w-full  overflow-hidden bg-white rounded-lg shadow-lg lg:max-w-4xl">
         <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
           <div className="flex justify-center mx-auto">
             <img className="w-auto h-8" src={logo} alt="Logo" />

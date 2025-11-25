@@ -6,9 +6,9 @@ import axios from "axios";
 import LoadingSpinner from "./LoadingSpinner";
 
 const categories = [
-  { label: "Web Development", value: "Web Development" },
-  { label: "Graphics Design", value: "Graphics Design" },
-  { label: "Digital Marketing", value: "Digital Marketing" },
+  { id: 0, label: "Web Development", value: "Web Development" },
+  { id: 1, label: "Graphics Design", value: "Graphics Design" },
+  { id: 2, label: "Digital Marketing", value: "Digital Marketing" },
 ];
 
 const TabCategories = () => {
@@ -57,9 +57,9 @@ const TabCategories = () => {
           </TabList>
         </div>
 
-        {categories.map((_, idx) => (
+        {categories.map((cat, idx) => (
           <TabPanel key={idx}>
-            {selectedTabs === idx ? (
+            {selectedTabs === cat.id ? ( 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 min-h-[300px] animate-fadeIn">
                 {loading ? (
                   <div className="col-span-full text-center text-gray-500 text-lg">
@@ -74,8 +74,8 @@ const TabCategories = () => {
                 )}
               </div>
             ) : (
-              <div className="min-h-[300px]"></div> 
-            )}
+              <div className="min-h-[300px]"></div>
+            )} 
           </TabPanel>
         ))}
       </div>
@@ -83,4 +83,4 @@ const TabCategories = () => {
   );
 };
 
-export default React.memo(TabCategories);
+export default TabCategories;

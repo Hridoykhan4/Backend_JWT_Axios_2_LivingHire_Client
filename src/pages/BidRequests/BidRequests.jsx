@@ -36,7 +36,7 @@ const BidRequests = () => {
 
       // Now hard One for auto refetching from any components
       queryClient.invalidateQueries({ queryKey: ["bid-requests"] });
-      queryClient.invalidateQueries({ queryKey: ["my-bids"] });
+      queryClient.invalidateQueries({ queryKey: ["my-bids"] }); 
 
       toast.success(`Updated Successfully`, {
         position: "top-right",
@@ -57,6 +57,8 @@ const BidRequests = () => {
         Error: {error.message}
       </p>
     );
+
+
   return (
     <section className="container px-4 mx-auto pt-12">
       <div className="flex items-center gap-x-3">
